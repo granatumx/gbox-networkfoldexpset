@@ -59,12 +59,14 @@ def main():
                     closestkeyvalue = sc
                     closestkey = key
                     break
-                if closestkey == None:
-                    keys[gene_id] = currentkeyindex + 1
-                else:
-                    keys[gene_id] = keys[closestkey]
-                    add_edges = False
-                    print("Found a near gene: {}".format(closestkey), flush=True)
+            if closestkey == None:
+                keys[gene_id] = currentkeyindex + 1
+            else:
+                keys[gene_id] = keys[closestkey]
+                add_edges = False
+                print("Found a near gene: {}".format(closestkey), flush=True)
+        else:
+            add_edges = False
         if add_edges:
             for cluster in clustercomparisonstotest:
                 score = clustersvsgenes.loc[cluster, gene_id]
