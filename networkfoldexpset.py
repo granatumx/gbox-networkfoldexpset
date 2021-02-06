@@ -46,36 +46,37 @@ def main():
     for gene_id in clustersvsgenes.columns: 
         gene_count = gene_count + 1
         print("Genecount = {}/{}".format(gene_count, len(clustersvsgenes.columns)), flush=True)
-        add_edges = True
-        if not gene_id in keys:
-                    # First check if within distance of another group 
-            closestkey = None
-            closestkeyvalue = 1.0e12
-            for key in keys:
-                gene_values = clustersvsgenes.loc[:, gene_id]
-                ref_values = clustersvsgenes.loc[:, key]
-                sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
-                if sc <= max_dist and sc < closestkeyvalue:
-                    closestkeyvalue = sc
-                    closestkey = key
-                    break
-            if closestkey == None:
-                keys[gene_id] = currentkeyindex + 1
-            else:
-                keys[gene_id] = keys[closestkey]
-                add_edges = False
-                print("Found a near gene: {}".format(closestkey), flush=True)
-        else:
-            add_edges = False
-        if add_edges:
-            for cluster in clustercomparisonstotest:
-                score = clustersvsgenes.loc[cluster, gene_id]
-                if score >= min_zscore:
-                            
-                    # print("Score = {}".format(score), flush=True)
-                    # olddict = resultsmap.get(gene_id, {})
-                    # olddict[cluster] = score
-                    # resultsmap[gene_id] = olddict
+        add_all_edges_for_current_gene = True 
+        for cluster in clustercomparisonstotest:
+            score = clustersvsgenes.loc[cluster, gene_id]
+            if score >= min_zscore:
+                add_edges = True
+                if not gene_id in keys:
+                         # First check if within distance of another group 
+                    closestkey = None
+                    closestkeyvalue = 1.0e12
+                    for key in keys:
+                        gene_values = clustersvsgenes.loc[:, gene_id]
+                        ref_values = clustersvsgenes.loc[:, key]
+                        sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
+                        if sc <= max_dist and sc < closestkeyvalue:
+                            closestkeyvalue = sc
+                            closestkey = key
+                            break
+                    if closestkey == None:
+                        keys[gene_id] = currentkeyindex + 1
+                    else:
+                        keys[gene_id] = keys[closestkey]
+                        add_edges = False
+                        add_all_edges_for_current_gene = False
+                        print("Found a near gene: {}".format(closestkey), flush=True)
+                else:
+                    add_edges = add_all_edges_for_current_gene
+                # print("Score = {}".format(score), flush=True)
+                # olddict = resultsmap.get(gene_id, {})
+                # olddict[cluster] = score
+                # resultsmap[gene_id] = olddict
+                if add_edges:
                     from_to = re.split(' vs ', cluster)
                     if from_to[1] != 'rest':
                         G.add_weighted_edges_from([(from_to[1], from_to[0], score/maxexpression*5.0)], label=str(keys[gene_id]), penwidth=str(score/maxexpression*5.0))
@@ -86,7 +87,7 @@ def main():
                         else:
                             relabel_dict = relabel_dict + ", " + str(keys[gene_id])
                         relabels[from_to[0]] = relabel_dict
-                    currentkeyindex = max(currentkeyindex, keys[gene_id])
+                currentkeyindex = max(currentkeyindex, keys[gene_id])
 
     print("Relabels {}".format(relabels), flush=True)
     G = nx.relabel_nodes(G, relabels)
