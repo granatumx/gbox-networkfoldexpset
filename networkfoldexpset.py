@@ -76,7 +76,7 @@ def main():
                     # resultsmap[gene_id] = olddict
                     from_to = re.split(' vs ', cluster)
                     if from_to[1] != 'rest':
-                        G.add_weighted_edges_from([(from_to[1], from_to[0], score/max_expression*5.0)], label=str(keys[gene_id]), penwidth=str(score/max_expression*5.0))
+                        G.add_weighted_edges_from([(from_to[1], from_to[0], score/maxexpression*5.0)], label=str(keys[gene_id]), penwidth=str(score/maxexpression*5.0))
                     else:
                         relabel_dict = relabels.get(from_to[0], "")
                         if relabel_dict == "":
@@ -112,7 +112,7 @@ def main():
     for k, v in sorted(inv_map.items(), key=lambda item: item[0]):
         newv = map(lambda gene: "[{}]({})".format(gene, geturl(gene)), v)
         vliststr = ", ".join(newv)
-        newstr = "{}: {}".format(v, vliststr)
+        newstr = "{}: {}".format(k, vliststr)
         if footnote == "" :
             footnote = newstr
         else:
