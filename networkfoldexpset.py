@@ -35,10 +35,11 @@ def main():
         G.add_node(cl)
 
     # {pathway : {"cluster1":score1, "cluster2":score2}, pathway2 : {}}
-    resultsmap = {}
+    # resultsmap = {}
     relabels = {}
     keys = {}
     currentkeyindex = 0
+    print("Number to analyze = {}".format(len(clustersvsgenes.columns)*len(clustercomparisonstotest)), flush=True)
     for gene_id in clustersvsgenes.columns: 
         for cluster in clustercomparisonstotest:
             score = clustersvsgenes.loc[cluster, gene_id]
@@ -60,10 +61,10 @@ def main():
                     else:
                         keys[gene_id] = keys[closestkey]
                             
-                print("Score = {}".format(score), flush=True)
-                olddict = resultsmap.get(gene_id, {})
-                olddict[cluster] = score
-                resultsmap[gene_id] = olddict
+                # print("Score = {}".format(score), flush=True)
+                # olddict = resultsmap.get(gene_id, {})
+                # olddict[cluster] = score
+                # resultsmap[gene_id] = olddict
                 from_to = re.split(' vs ', cluster)
                 if from_to[1] != 'rest':
                     G.add_weighted_edges_from([(from_to[1], from_to[0], score*2.0)], label=str(keys[gene_id]), penwidth=str(score*2.0))
