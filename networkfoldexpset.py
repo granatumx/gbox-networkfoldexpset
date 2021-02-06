@@ -42,9 +42,7 @@ def main():
     for gene_id in clustersvsgenes.columns: 
         for cluster in clustercomparisonstotest:
             try:
-                resultdf = clustersvsgenes.loc[cluster, gene_id]
-                resultdf = np.nan_to_num(resultdf)
-                score = np.nanmean(resultdf)
+                score = clustersvsgenes.loc[cluster, gene_id]
                 if score >= min_zscore:
                     if not gene_id in keys:
                         # First check if within distance of another group 
