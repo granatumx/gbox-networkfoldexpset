@@ -46,7 +46,7 @@ def main():
     for gene_id in clustersvsgenes.columns: 
         gene_count = gene_count + 1
         print("Genecount = {}/{}".format(gene_count, len(clustersvsgenes.columns)), flush=True)
-        add_edges = False
+        add_edges = True
         if not gene_id in keys:
                     # First check if within distance of another group 
             closestkey = None
@@ -61,9 +61,9 @@ def main():
                     break
                 if closestkey == None:
                     keys[gene_id] = currentkeyindex + 1
-                    add_edges = True
                 else:
                     keys[gene_id] = keys[closestkey]
+                    add_edges = False
                     print("Found a near gene: {}".format(closestkey), flush=True)
         if add_edges:
             for cluster in clustercomparisonstotest:
