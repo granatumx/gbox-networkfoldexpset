@@ -6,4 +6,4 @@ meta:
     email: lana.garmire.group@gmail.com
 
 gboxes:
-  - ./yamls/msigdbfoldexpset.yaml
+  - ./yamls/networkfoldexpset.yaml
