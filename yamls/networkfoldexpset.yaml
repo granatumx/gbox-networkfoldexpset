@@ -1,0 +1,30 @@
+id: NetworkFoldExpSet-{VER}
+meta:
+  title: Network fold expression sets {VER}
+  subtitle: Plot a network of expressed genes between clusters from differential expression set
+  description: >
+    A network can be created showing upregulated genes between clusters. Genes that operate in a similar
+    fashion (near enough to each other over all clusters) can be condensed to minimize number of edges.
+endpoints:
+  backend:
+    cmd: python ./networkfoldexpset.py
+    type: docker
+    image: {GBOX}
+frontend:
+  args:
+    - min: 0.0
+      step: 0.1
+      type: number
+      label: Min zscore (to use for filtering sets that are not well expressed)
+      default: 1.0
+      injectInto: min_zscore
+    - min: 0.0
+      step: 0.1
+      type: number
+      label: Merge genes within this distance as they should differentially express the same way
+      default: 0.5
+      injectInto: max_dist
+  imports:
+    - kind: assay
+      label: Cluster set differential expression for each gene
+      injectInto: clustersvsgenes
