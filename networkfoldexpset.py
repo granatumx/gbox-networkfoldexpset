@@ -54,6 +54,7 @@ def main():
                         if sc <= max_dist and sc < closestkeyvalue:
                             closestkeyvalue = sc
                             closestkey = key
+                            break
                     if closestkey == None:
                         keys[gene_id] = currentkeyindex + 1
                     else:
