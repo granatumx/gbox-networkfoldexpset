@@ -50,18 +50,7 @@ def main():
                     for key in keys:
                         gene_values = clustersvsgenes.loc[:, gene_id]
                         ref_values = clustersvsgenes.loc[:, key]
-                        print("Genes")
-                        print(gene_values, flush=True)
-                        print("Key")
-                        print(ref_values, flush=True)
-                        print("Diff")
-                        print(gene_values - ref_values, flush=True)
-                        print("Square")
-                        print(np.square(gene_values - ref_values), flush=True)
-                        print("Sum")
-                        print(np.nansum(np.square(gene_values - ref_values)), flush=True)
-
-                        sc = np.sqrt(np.square(gene_values-ref_values).sum(axis=0))
+                        sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
                         if sc <= max_dist and sc < closestkeyvalue:
                             closestkeyvalue = sc
                             closestkey = key
