@@ -58,7 +58,7 @@ def main():
                     for key in keys:
                         gene_values = clustersvsgenes.loc[:, gene_id]
                         ref_values = clustersvsgenes.loc[:, key]
-                        sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
+                        sc = np.sqrt(np.nansum(np.square(gene_values-ref_values))/len(gene_values))
                         if sc <= max_dist and sc < closestkeyvalue:
                             closestkeyvalue = sc
                             closestkey = key
