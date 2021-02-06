@@ -41,41 +41,37 @@ def main():
     currentkeyindex = 0
     for gene_id in clustersvsgenes.columns: 
         for cluster in clustercomparisonstotest:
-            try:
-                score = clustersvsgenes.loc[cluster, gene_id]
-                if score >= min_zscore:
-                    if not gene_id in keys:
-                        # First check if within distance of another group 
-                        closestkey = None
-                        closestkeyvalue = 1.0e12
-                        for key in keys:
-                            sc = np.sqrt(np.square(clustersvsgenes.loc[:, gene_id] - clustersvsgenes.loc[:, key]).sum(axis=0))
-                            if sc <= max_dist and sc < closestkeyvalue:
-                                closestkeyvalue = sc
-                                closestkey = key
-                        if closestkey == None:
-                            keys[gene_id] = currentkeyindex + 1
-                        else:
-                            keys[gene_id] = keys[closestkey]
-                            
-                    print("Score = {}".format(score), flush=True)
-                    olddict = resultsmap.get(gene_id, {})
-                    olddict[cluster] = score
-                    resultsmap[gene_id] = olddict
-                    from_to = re.split(' vs ', cluster)
-                    if from_to[1] != 'rest':
-                        G.add_weighted_edges_from([(from_to[1], from_to[0], score*2.0)], label=str(keys[gene_id]), penwidth=str(score*2.0))
+            score = clustersvsgenes.loc[cluster, gene_id]
+            if score >= min_zscore:
+                if not gene_id in keys:
+                    # First check if within distance of another group 
+                    closestkey = None
+                    closestkeyvalue = 1.0e12
+                    for key in keys:
+                        sc = np.sqrt(np.square(clustersvsgenes.loc[:, gene_id] - clustersvsgenes.loc[:, key]).sum(axis=0))
+                        if sc <= max_dist and sc < closestkeyvalue:
+                            closestkeyvalue = sc
+                            closestkey = key
+                    if closestkey == None:
+                        keys[gene_id] = currentkeyindex + 1
                     else:
-                        relabel_dict = relabels.get(from_to[0], "")
-                        if relabel_dict == "":
-                            relabel_dict = from_to[0] + ": " + str(keys[gene_id])
-                        else:
-                            relabel_dict = relabel_dict + ", " + str(keys[gene_id])
-                        relabels[from_to[0]] = relabel_dict
-                    currentkeyindex = max(currentkeyindex, keys[gene_id])
-            except Exception as inst:
-                print("Key error with {}".format(gene_id), flush=True)
-                print("Exception: {}".format(inst), flush=True)
+                        keys[gene_id] = keys[closestkey]
+                            
+                print("Score = {}".format(score), flush=True)
+                olddict = resultsmap.get(gene_id, {})
+                olddict[cluster] = score
+                resultsmap[gene_id] = olddict
+                from_to = re.split(' vs ', cluster)
+                if from_to[1] != 'rest':
+                    G.add_weighted_edges_from([(from_to[1], from_to[0], score*2.0)], label=str(keys[gene_id]), penwidth=str(score*2.0))
+                else:
+                    relabel_dict = relabels.get(from_to[0], "")
+                    if relabel_dict == "":
+                        relabel_dict = from_to[0] + ": " + str(keys[gene_id])
+                    else:
+                        relabel_dict = relabel_dict + ", " + str(keys[gene_id])
+                    relabels[from_to[0]] = relabel_dict
+                currentkeyindex = max(currentkeyindex, keys[gene_id])
 
     print("Relabels {}".format(relabels), flush=True)
     G = nx.relabel_nodes(G, relabels)
