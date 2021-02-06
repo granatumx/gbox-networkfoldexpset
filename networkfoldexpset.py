@@ -49,7 +49,7 @@ def main():
                     closestkeyvalue = 1.0e12
                     for key in keys:
                         gene_values = clustersvsgenes.loc[:, gene_id]
-                        ref_values = clustersvsgene.loc[:, key]
+                        ref_values = clustersvsgenes.loc[:, key]
                         print("Genes")
                         print(gene_values, flush=True)
                         print("Key")
