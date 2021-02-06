@@ -59,7 +59,7 @@ def main():
                         print("Square")
                         print(np.square(gene_values - ref_values), flush=True)
                         print("Sum")
-                        print(np.square(gene_values - ref_values).sum(axis=0), flush=True)
+                        print(np.nansum(np.square(gene_values - ref_values)), flush=True)
 
                         sc = np.sqrt(np.square(gene_values-ref_values).sum(axis=0))
                         if sc <= max_dist and sc < closestkeyvalue:
