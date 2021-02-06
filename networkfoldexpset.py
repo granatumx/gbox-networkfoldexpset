@@ -53,8 +53,10 @@ def main():
                             if sc <= max_dist and sc < closestkeyvalue:
                                 closestkeyvalue = sc
                                 closestkey = key
-                        if key == None:
+                        if closestkey == None:
                             keys[gene_id] = currentkeyindex + 1
+                        else:
+                            keys[gene_id] = keys[closestkey]
                             
                     print("Score = {}".format(score), flush=True)
                     olddict = resultsmap.get(gene_id, {})
