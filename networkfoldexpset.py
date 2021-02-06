@@ -39,47 +39,52 @@ def main():
     relabels = {}
     keys = {}
     currentkeyindex = 0
+    maxexpression = np.max(np.max(clustersvsgenes))
+    print("Max expression = {}".format(maxexpression))
     print("Number to analyze = {}".format(len(clustersvsgenes.columns)*len(clustercomparisonstotest)), flush=True)
     gene_count = 0
     for gene_id in clustersvsgenes.columns: 
         gene_count = gene_count + 1
-        print("Gene = {}".format(gene_id), flush=True)
         print("Genecount = {}/{}".format(gene_count, len(clustersvsgenes.columns)), flush=True)
-        for cluster in clustercomparisonstotest:
-            score = clustersvsgenes.loc[cluster, gene_id]
-            if score >= min_zscore:
-                if not gene_id in keys:
+        add_edges = False
+        if not gene_id in keys:
                     # First check if within distance of another group 
-                    closestkey = None
-                    closestkeyvalue = 1.0e12
-                    for key in keys:
-                        gene_values = clustersvsgenes.loc[:, gene_id]
-                        ref_values = clustersvsgenes.loc[:, key]
-                        sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
-                        if sc <= max_dist and sc < closestkeyvalue:
-                            closestkeyvalue = sc
-                            closestkey = key
-                            break
-                    if closestkey == None:
-                        keys[gene_id] = currentkeyindex + 1
-                    else:
-                        keys[gene_id] = keys[closestkey]
-                            
-                # print("Score = {}".format(score), flush=True)
-                # olddict = resultsmap.get(gene_id, {})
-                # olddict[cluster] = score
-                # resultsmap[gene_id] = olddict
-                from_to = re.split(' vs ', cluster)
-                if from_to[1] != 'rest':
-                    G.add_weighted_edges_from([(from_to[1], from_to[0], score*2.0)], label=str(keys[gene_id]), penwidth=str(score*2.0))
+            closestkey = None
+            closestkeyvalue = 1.0e12
+            for key in keys:
+                gene_values = clustersvsgenes.loc[:, gene_id]
+                ref_values = clustersvsgenes.loc[:, key]
+                sc = np.sqrt(np.nansum(np.square(gene_values-ref_values)))
+                if sc <= max_dist and sc < closestkeyvalue:
+                    closestkeyvalue = sc
+                    closestkey = key
+                    break
+                if closestkey == None:
+                    keys[gene_id] = currentkeyindex + 1
+                    add_edges = True
                 else:
-                    relabel_dict = relabels.get(from_to[0], "")
-                    if relabel_dict == "":
-                        relabel_dict = from_to[0] + ": " + str(keys[gene_id])
+                    keys[gene_id] = keys[closestkey]
+                    print("Found a near gene: {}".format(closestkey), flush=True)
+        if add_edges:
+            for cluster in clustercomparisonstotest:
+                score = clustersvsgenes.loc[cluster, gene_id]
+                if score >= min_zscore:
+                            
+                    # print("Score = {}".format(score), flush=True)
+                    # olddict = resultsmap.get(gene_id, {})
+                    # olddict[cluster] = score
+                    # resultsmap[gene_id] = olddict
+                    from_to = re.split(' vs ', cluster)
+                    if from_to[1] != 'rest':
+                        G.add_weighted_edges_from([(from_to[1], from_to[0], score/max_expression*5.0)], label=str(keys[gene_id]), penwidth=str(score/max_expression*5.0))
                     else:
-                        relabel_dict = relabel_dict + ", " + str(keys[gene_id])
-                    relabels[from_to[0]] = relabel_dict
-                currentkeyindex = max(currentkeyindex, keys[gene_id])
+                        relabel_dict = relabels.get(from_to[0], "")
+                        if relabel_dict == "":
+                            relabel_dict = from_to[0] + ": " + str(keys[gene_id])
+                        else:
+                            relabel_dict = relabel_dict + ", " + str(keys[gene_id])
+                        relabels[from_to[0]] = relabel_dict
+                    currentkeyindex = max(currentkeyindex, keys[gene_id])
 
     print("Relabels {}".format(relabels), flush=True)
     G = nx.relabel_nodes(G, relabels)
