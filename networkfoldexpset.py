@@ -40,7 +40,10 @@ def main():
     keys = {}
     currentkeyindex = 0
     print("Number to analyze = {}".format(len(clustersvsgenes.columns)*len(clustercomparisonstotest)), flush=True)
+    gene_count = 0
     for gene_id in clustersvsgenes.columns: 
+        print("Gene = {}".format(gene_id), flush=True)
+        print("Genecount = {}/{}".format(gene_count, len(clustersvsgenes.columns)), flush=True)
         for cluster in clustercomparisonstotest:
             score = clustersvsgenes.loc[cluster, gene_id]
             if score >= min_zscore:
