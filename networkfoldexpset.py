@@ -74,7 +74,7 @@ def main():
                         relabels[from_to[0]] = relabel_dict
                     currentkeyindex = max(currentkeyindex, keys[gene_id])
             except Exception as inst:
-                print("Key error with {}".format(gset["name"]), flush=True)
+                print("Key error with {}".format(gene_id), flush=True)
                 print("Exception: {}".format(inst), flush=True)
 
     print("Relabels {}".format(relabels), flush=True)
