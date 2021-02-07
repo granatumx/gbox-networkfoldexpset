@@ -94,7 +94,7 @@ def main():
     pos = nx.spring_layout(G)
     edge_labels = nx.get_edge_attributes(G, 'label')
     write_dot(G, 'plot.dot')
-    os.system("dot plot.dot -Ktwopi -Tpng -Gdpi=600 > plot.png")
+    os.system("dot plot.dot -Kcirco -Tpng -Gdpi=600 > plot.png")
     with open('plot.png', "rb") as f:
         image_b64 = b64encode(f.read()).decode("utf-8")
 
@@ -115,7 +115,7 @@ def main():
     for k, v in sorted(inv_map.items(), key=lambda item: item[0]):
         newv = map(lambda gene: "[{}]({})".format(gene, geturl(gene)), v)
         vliststr = ", ".join(newv)
-        newstr = "{}: {}".format(k, vliststr)
+        newstr = "{}: {} {}".format(k, (clustersvsgenes.loc[:, v[0]]).to_dict(), vliststr)
         if footnote == "" :
             footnote = newstr
         else:
