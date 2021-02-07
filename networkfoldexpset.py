@@ -115,7 +115,7 @@ def main():
     for k, v in sorted(inv_map.items(), key=lambda item: item[0]):
         newv = map(lambda gene: "[{}]({})".format(gene, geturl(gene)), v)
         vliststr = ", ".join(newv)
-        newstr = "{}: {} {}".format(k, (clustersvsgenes.loc[:, v[0]]).to_dict(), vliststr)
+        newstr = "{}: {} {}".format(k, (clustersvsgenes.loc[clustersvsgenes[v[0]]>min_zscore, v[0]]).to_dict(), vliststr)
         if footnote == "" :
             footnote = newstr
         else:
